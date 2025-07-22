@@ -25,17 +25,18 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup
-      run: sudo apt-get install build-essential
-    - name: Configure build and test
-      run: |
-        if [[ "$CC" == "clang" ]]; then
+      - uses: actions/checkout@v2
+    
+      - name: Setup
+        run: sudo apt-get install -y clang make build-essential
+    
+      - name: Configure build and test with Clang and ASAN
+        env:
+          CC: clang
+          CFLAGS: -fsanitize=address
+          LDFLAGS: -fsanitize=address
+        run: |
+          make clean
           make defconfig
           make
           make tests
-        else
-          VERBOSE=all ASAN=1 CC=$CC make defconfig tests
-        fi
-      env:
-        CC: clang
