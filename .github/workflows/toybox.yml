@@ -29,4 +29,13 @@ jobs:
     - name: Setup
       run: sudo apt-get install build-essential
     - name: Configure build and test
-      run: VERBOSE=all CC=clang make defconfig tests
+      run: |
+        if [[ "$CC" == "clang" ]]; then
+          make defconfig
+          make
+          make tests
+        else
+          VERBOSE=all ASAN=1 CC=$CC make defconfig tests
+        fi
+      env:
+        CC: clang
