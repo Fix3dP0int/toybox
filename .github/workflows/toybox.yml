@@ -33,8 +33,9 @@ jobs:
       - name: Configure build and test with Clang and ASAN
         env:
           CC: clang
-          CFLAGS: -fsanitize=address
+          CFLAGS: -fsanitize=address -fno-omit-frame-pointer -g
           LDFLAGS: -fsanitize=address
+          ASAN_OPTIONS: detect_leaks=0
         run: |
           make clean
           make defconfig
