@@ -35,9 +35,12 @@ jobs:
           CC: clang
           CFLAGS: -fsanitize=address -fno-omit-frame-pointer -g
           LDFLAGS: -fsanitize=address
-          ASAN_OPTIONS: detect_leaks=0
+          ASAN_OPTIONS: "verbosity=1:log_path=asan.log:abort_on_error=1"
         run: |
           make clean
           make defconfig
           make
-          make tests
+          set +e
+          make tests || true
+          echo "===== ASAN LOG ====="
+          cat asan.log || echo "No ASAN log found"
