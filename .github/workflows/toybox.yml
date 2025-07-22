@@ -21,12 +21,20 @@ jobs:
     - name: Test
       run: VERBOSE=all make tests
 
-  Ubuntu-22_04:
+  build-clang:
     runs-on: ubuntu-22.04
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup
-      run: sudo apt-get install build-essential
-    - name: Configure build and test
-      run: VERBOSE=all CC=clang make defconfig tests
+      - uses: actions/checkout@v2
+      - name: Setup
+        run: sudo apt-get install build-essential clang
+      - name: Build with clang
+        run: VERBOSE=all CC=clang make defconfig tests
+
+  build-gcc:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup
+        run: sudo apt-get install build-essential
+      - name: Build with gcc
+        run: VERBOSE=all CC=gcc make defconfig tests
