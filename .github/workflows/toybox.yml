@@ -21,26 +21,20 @@ jobs:
     - name: Test
       run: VERBOSE=all make tests
 
-  Ubuntu-22_04:
+  build-clang:
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v2
-    
       - name: Setup
-        run: sudo apt-get install -y clang make build-essential
-    
-      - name: Configure build and test with Clang and ASAN
-        env:
-          CC: clang
-          CFLAGS: -fsanitize=address -fno-omit-frame-pointer -g
-          LDFLAGS: -fsanitize=address
-          ASAN_OPTIONS: "verbosity=1:log_path=asan.log:abort_on_error=1"
-        run: |
-          make clean
-          make defconfig
-          make
-          set +e
-          make tests || true
-          echo "===== ASAN LOG ====="
-          cat asan.log || echo "No ASAN log found"
+        run: sudo apt-get install build-essential clang
+      - name: Build with clang
+        run: VERBOSE=all CC=clang make defconfig tests
+
+  build-gcc:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup
+        run: sudo apt-get install build-essential
+      - name: Build with gcc
+        run: VERBOSE=all CC=gcc make defconfig tests
